@@ -1,0 +1,198 @@
+[
+  {
+    "name": "class",
+    "fullPath": "/class",
+    "asPath": "/class",
+    "id": "%2Fclass",
+    "parent": {},
+    "readme": {
+      "title": "类",
+      "fullPath": "/class/README.md"
+    },
+    "cards": [
+      {
+        "name": "go.md",
+        "baseName": "go",
+        "extName": ".md",
+        "fullPath": "/class/go.md"
+      },
+      {
+        "name": "js.md",
+        "baseName": "js",
+        "extName": ".md",
+        "fullPath": "/class/js.md"
+      },
+      {
+        "name": "python.md",
+        "baseName": "python",
+        "extName": ".md",
+        "fullPath": "/class/python.md"
+      }
+    ],
+    "nodes": [
+      {
+        "name": "constructor",
+        "fullPath": "/class/constructor",
+        "asPath": "/class/constructor",
+        "id": "%2Fclass%2Fconstructor",
+        "parent": {
+          "name": "class",
+          "fullPath": "/class",
+          "asPath": "/class",
+          "id": "%2Fclass",
+          "readme": {
+            "title": "类",
+            "fullPath": "/class/README.md"
+          }
+        },
+        "readme": {
+          "title": "构造函数",
+          "fullPath": "/class/constructor/README.md"
+        },
+        "cards": [
+          {
+            "name": "js.md",
+            "baseName": "js",
+            "extName": ".md",
+            "fullPath": "/class/constructor/js.md"
+          },
+          {
+            "name": "python.md",
+            "baseName": "python",
+            "extName": ".md",
+            "fullPath": "/class/constructor/python.md"
+          }
+        ],
+        "nodes": [
+          {
+            "name": "default-constructor",
+            "fullPath": "/class/constructor/default-constructor",
+            "asPath": "/class/constructor/default-constructor",
+            "id": "%2Fclass%2Fconstructor%2Fdefault-constructor",
+            "parent": {
+              "name": "constructor",
+              "fullPath": "/class/constructor",
+              "asPath": "/class/constructor",
+              "id": "%2Fclass%2Fconstructor",
+              "readme": {
+                "title": "构造函数",
+                "fullPath": "/class/constructor/README.md"
+              }
+            },
+            "readme": {
+              "fullPath": "/class/constructor/default-constructor/README.md"
+            },
+            "cards": [
+              {
+                "name": "js.md",
+                "baseName": "js",
+                "extName": ".md",
+                "fullPath": "/class/constructor/default-constructor/js.md"
+              },
+              {
+                "name": "python.md",
+                "baseName": "python",
+                "extName": ".md",
+                "fullPath": "/class/constructor/default-constructor/python.md"
+              }
+            ],
+            "nodes": []
+          }
+        ]
+      },
+      {
+        "name": "method",
+        "fullPath": "/class/method",
+        "asPath": "/class/method",
+        "id": "%2Fclass%2Fmethod",
+        "parent": {
+          "name": "class",
+          "fullPath": "/class",
+          "asPath": "/class",
+          "id": "%2Fclass",
+          "readme": {
+            "title": "类",
+            "fullPath": "/class/README.md"
+          }
+        },
+        "readme": {
+          "fullPath": "/class/method/README.md"
+        },
+        "cards": [
+          {
+            "name": "js.md",
+            "baseName": "js",
+            "extName": ".md",
+            "fullPath": "/class/method/js.md"
+          },
+          {
+            "name": "python.md",
+            "baseName": "python",
+            "extName": ".md",
+            "fullPath": "/class/method/python.md"
+          }
+        ],
+        "nodes": []
+      }
+    ]
+  },
+  {
+    "name": "函数",
+    "fullPath": "/函数",
+    "asPath": "/%E5%87%BD%E6%95%B0",
+    "id": "%2F%E5%87%BD%E6%95%B0",
+    "parent": {},
+    "readme": {
+      "fullPath": "/函数/README.md"
+    },
+    "cards": [
+      {
+        "name": "js.md",
+        "baseName": "js",
+        "extName": ".md",
+        "fullPath": "/函数/js.md"
+      },
+      {
+        "name": "python.md",
+        "baseName": "python",
+        "extName": ".md",
+        "fullPath": "/函数/python.md"
+      }
+    ],
+    "nodes": [
+      {
+        "name": "参数",
+        "fullPath": "/函数/参数",
+        "asPath": "/%E5%87%BD%E6%95%B0/%E5%8F%82%E6%95%B0",
+        "id": "%2F%E5%87%BD%E6%95%B0%2F%E5%8F%82%E6%95%B0",
+        "parent": {
+          "name": "函数",
+          "fullPath": "/函数",
+          "asPath": "/%E5%87%BD%E6%95%B0",
+          "id": "%2F%E5%87%BD%E6%95%B0",
+          "readme": {
+            "fullPath": "/函数/README.md"
+          }
+        },
+        "readme": {
+          "fullPath": "/函数/参数/README.md"
+        },
+        "cards": [
+          {
+            "name": "js.md",
+            "baseName": "js",
+            "extName": ".md",
+            "fullPath": "/函数/参数/js.md"
+          },
+          {
+            "name": "python.md",
+            "baseName": "python",
+            "extName": ".md",
+            "fullPath": "/函数/参数/python.md"
+          }
+        ],
+        "nodes": []
+      }
+    ]
+  }
+]

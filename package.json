@@ -1,0 +1,30 @@
+{
+  "name": "comparison-note",
+  "version": "0.1.0",
+  "description": "对比学习笔记",
+  "author": "Gabe Yuan <yugang2002@gmail.com>",
+  "scripts": {
+    "nav": "node bin/index",
+    "dev": "next src",
+    "build": "node bin/index && next build src",
+    "start": "next start src",
+    "export": "next export src -o docs/"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "fs-extra": "^8.1.0",
+    "github-markdown-css": "^4.0.0",
+    "gray-matter": "^4.0.2",
+    "next": "latest",
+    "raw-loader": "^4.0.0",
+    "react": "^16.13.0",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "react-dom": "^16.13.0",
+    "react-markdown": "^4.3.1",
+    "react-syntax-highlighter": "^12.2.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2"
+  }
+}
