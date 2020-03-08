@@ -1,4 +1,5 @@
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production"; // 判断是否生产环境
+const ASSET_PREFIX = "comparison-note"; // 部署时的子目录
 
 module.exports = {
   webpack: config => {
@@ -8,8 +9,10 @@ module.exports = {
     });
     return config;
   },
-  // assetPrefix: '/comparison-note/',
-  assetPrefix: isProd ? "/comparison-note" : "",
+  assetPrefix: isProd ? ASSET_PREFIX : "",
+  env: {
+    ASSET_PREFIX: isProd ? ASSET_PREFIX : "",
+  },
   exportTrailingSlash: true,
   exportPathMap: async function() {
     const paths = {

@@ -26,7 +26,9 @@ export default function Post({ nav, content, cards }) {
   return (
     <Layout>
       <Head>
-        <title>{nav && (nav.readme.title || nav.name)}</title>
+        <title>
+          {(nav && (nav.readme.title || nav.name)) || "对比学习笔记"}
+        </title>
       </Head>
       <h1>{nav && (nav.readme.title || nav.name)}</h1>
       <div style={{ marginBottom: 12 }}>
@@ -79,10 +81,10 @@ export default function Post({ nav, content, cards }) {
   );
 }
 
-Post.getInitialProps = async function({ asPath }) {
+Post.getInitialProps = async function(context) {
   // 导入菜单
   const navs = require("../utils/navs.json");
-  const nav = findNav(asPath, navs);
+  const nav = findNav(context.asPath, navs);
 
   let content = "";
   const cards = [];

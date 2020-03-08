@@ -9,12 +9,17 @@ import packageJson from "../../package.json";
 export default function Header() {
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/">{packageJson.description}</Navbar.Brand>
+      <Navbar.Brand href={`${process.env.ASSET_PREFIX}/`}>
+        {packageJson.description}
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           {navs.map(nav => (
-            <Nav.Link href={nav.asPath} key={nav.id}>
+            <Nav.Link
+              href={`${process.env.ASSET_PREFIX}${nav.asPath}`}
+              key={nav.id}
+            >
               {nav.readme.title || nav.name}
             </Nav.Link>
           ))}

@@ -11,7 +11,7 @@ export default function Index({ navs = [], indexContent }) {
   return (
     <Layout navs={navs}>
       <Head>
-        <title>{packageJson.description || "编程语言对比学习笔记"}</title>
+        <title>{packageJson.description || "对比学习笔记"}</title>
         {/* <meta name="viewport" content="initial-scale=1.0, width=device-width" /> */}
       </Head>
       <div style={{ marginBottom: 12 }}>

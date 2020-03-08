@@ -12,7 +12,7 @@ coverage/
 build/
 out/
 docs/
-comparision-note/
+comparison-note/
 
 npm-debug.log*
 yarn-debug.log*

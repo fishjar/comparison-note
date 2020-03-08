@@ -10,7 +10,10 @@ export default function Nav({ navs }) {
       {navs.map(nav => (
         <li key={nav.id}>
           {/* <Link href="/[...param]" as={`${nav.asPath}`}> */}
-          <Link href="/[...param]" as={`${nav.fullPath}`}>
+          <Link
+            href="/[...param]"
+            as={`${process.env.ASSET_PREFIX}${nav.fullPath}`}
+          >
             <a>{nav.readme.title || nav.name}</a>
           </Link>
           {nav.nodes.length > 0 && makeNav(nav.nodes)}

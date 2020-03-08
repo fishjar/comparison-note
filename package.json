@@ -9,7 +9,7 @@
     "dev": "next src",
     "build": "node bin/index && next build src",
     "start": "next start src",
-    "export": "next export src -o docs/"
+    "export": "next export src -o comparison-note/"
   },
   "license": "ISC",
   "dependencies": {
