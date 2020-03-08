@@ -9,7 +9,7 @@ module.exports = {
     return config;
   },
   // assetPrefix: '/comparison-note/',
-  assetPrefix: isProd ? "/comparison-note/" : "",
+  assetPrefix: isProd ? "/comparison-note" : "",
   exportTrailingSlash: true,
   exportPathMap: async function() {
     const paths = {

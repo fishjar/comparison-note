@@ -21,7 +21,7 @@ export default function Header() {
         </Nav>
       </Navbar.Collapse>
       <a
-        href="https://github.com/fishjar/programming-language-comparison"
+        href="https://github.com/fishjar/comparison-note"
         title="访问github源码"
       >
         github
