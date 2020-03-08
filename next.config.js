@@ -1,5 +1,5 @@
 const isProd = process.env.NODE_ENV === "production"; // 判断是否生产环境
-const ASSET_PREFIX = "comparison-note"; // 部署时的子目录
+const ASSET_PREFIX = "/comparison-note"; // 部署时的子目录
 
 module.exports = {
   webpack: config => {
