@@ -88,6 +88,11 @@ yarn export
 - 给`action`创建一个名为`ACCESS_TOKEN`的`secrets`
 - 直接`push`到`master`分支，`actions`会自动部署
 
+## 截图
+
+![comparison-note 1](/screenshot/01.png)
+![comparison-note 2](/screenshot/02.png)
+
 ## 一些坑
 
 - `getInitialProps`
