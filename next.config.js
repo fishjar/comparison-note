@@ -9,6 +9,7 @@ module.exports = {
     });
     return config;
   },
+  target: 'serverless',
   assetPrefix: isProd ? ASSET_PREFIX : "",
   env: {
     ASSET_PREFIX: isProd ? ASSET_PREFIX : "",
