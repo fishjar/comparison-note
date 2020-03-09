@@ -16,9 +16,7 @@ import Layout from "../components/Layout";
 import Nav from "../components/Nav";
 import { findNav } from "../utils";
 
-export default function Post({ nav, content, cards, context, navs }) {
-  console.log("context", context)
-  console.log("navs", navs)
+export default function Post({ nav, content, cards }) {
   // 对比显示的菜单组
   const [menus, setMenus] = useState(cards.map(item => item.baseName));
   const handleToggleCard = menus => {
@@ -114,5 +112,5 @@ Post.getInitialProps = async function(context) {
     });
   }
 
-  return { nav, content, cards, context, navs };
+  return { nav, content, cards };
 };
