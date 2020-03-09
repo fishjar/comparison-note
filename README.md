@@ -1,10 +1,12 @@
 # 对比学习笔记
 
+demo 浏览地址：https://fishjar.github.io/comparison-note/
+
+## 前记
+
 - 不同编程语言，许多特性是相似的，也有许多特性是不同的。
 - 在学习多种语言之后，记忆上有诸多混淆，查找文档又散落各处。
 - 所以萌发了做一个这样的笔记项目，通过直观的对比记录来学习、查阅相关知识。
-
-demo 浏览地址：https://fishjar.github.io/comparison-note/
 
 ## 项目特性
 
