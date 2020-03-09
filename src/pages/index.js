@@ -17,13 +17,15 @@ export default function Index({ navs = [], indexContent }) {
       <div style={{ marginBottom: 12 }}>
         <Markdown source={indexContent} />
       </div>
-      <Card>
-        {/* <Card.Header>目录</Card.Header> */}
-        <Card.Body>
-          <Card.Title>目录</Card.Title>
-          <Nav navs={navs} />
-        </Card.Body>
-      </Card>
+      {navs.length > 0 && (
+        <Card>
+          {/* <Card.Header>目录</Card.Header> */}
+          <Card.Body>
+            <Card.Title>目录</Card.Title>
+            <Nav navs={navs} />
+          </Card.Body>
+        </Card>
+      )}
     </Layout>
   );
 }

@@ -16,7 +16,7 @@ import Layout from "../components/Layout";
 import Nav from "../components/Nav";
 import { findNav } from "../utils";
 
-export default function Post({ nav, content, cards }) {
+export default function Post({ nav, content, cards = [] }) {
   // 对比显示的菜单组
   const [menus, setMenus] = useState(cards.map(item => item.baseName));
   const handleToggleCard = menus => {
@@ -34,41 +34,45 @@ export default function Post({ nav, content, cards }) {
       <div style={{ marginBottom: 12 }}>
         <Markdown source={content} />
       </div>
-      <Row className="justify-content-md-center" style={{ marginBottom: 12 }}>
-        <Col md="auto">
-          <ButtonToolbar>
-            <ToggleButtonGroup
-              size="sm"
-              type="checkbox"
-              value={menus}
-              onChange={handleToggleCard}
-            >
-              {cards.map(item => (
-                <ToggleButton
-                  key={item.name}
-                  variant="secondary"
-                  value={item.baseName}
-                >
-                  {item.baseName}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </ButtonToolbar>
-        </Col>
-      </Row>
-      <CardGroup>
-        {cards
-          .filter(item => menus.includes(item.baseName))
-          .map(item => (
-            <Card key={item.name}>
-              <Card.Header>{item.baseName}</Card.Header>
-              <Card.Body>
-                {/* <Card.Title>{item.baseName}</Card.Title> */}
-                <Markdown source={item.content} />
-              </Card.Body>
-            </Card>
-          ))}
-      </CardGroup>
+      {cards.length > 0 && (
+        <Row className="justify-content-md-center" style={{ marginBottom: 12 }}>
+          <Col md="auto">
+            <ButtonToolbar>
+              <ToggleButtonGroup
+                size="sm"
+                type="checkbox"
+                value={menus}
+                onChange={handleToggleCard}
+              >
+                {cards.map(item => (
+                  <ToggleButton
+                    key={item.name}
+                    variant="secondary"
+                    value={item.baseName}
+                  >
+                    {item.baseName}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </ButtonToolbar>
+          </Col>
+        </Row>
+      )}
+      {cards.length > 0 && (
+        <CardGroup>
+          {cards
+            .filter(item => menus.includes(item.baseName))
+            .map(item => (
+              <Card key={item.name}>
+                <Card.Header>{item.baseName}</Card.Header>
+                <Card.Body>
+                  {/* <Card.Title>{item.baseName}</Card.Title> */}
+                  <Markdown source={item.content} />
+                </Card.Body>
+              </Card>
+            ))}
+        </CardGroup>
+      )}
       {nav && nav.nodes.length > 0 && (
         <Card style={{ marginTop: 12 }}>
           <Card.Body>
