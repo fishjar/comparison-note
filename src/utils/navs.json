@@ -1,135 +1,47 @@
 [
   {
-    "name": "class",
-    "fullPath": "/class",
-    "asPath": "/class",
-    "id": "%2Fclass",
+    "name": "algorithm",
+    "fullPath": "/algorithm",
+    "asPath": "/algorithm",
+    "id": "%2Falgorithm",
     "parent": {},
     "readme": {
-      "title": "类",
-      "fullPath": "/class/README.md"
+      "title": "算法",
+      "fullPath": "/algorithm/README.md"
     },
-    "cards": [
-      {
-        "name": "go.md",
-        "baseName": "go",
-        "extName": ".md",
-        "fullPath": "/class/go.md"
-      },
-      {
-        "name": "js.md",
-        "baseName": "js",
-        "extName": ".md",
-        "fullPath": "/class/js.md"
-      },
-      {
-        "name": "python.md",
-        "baseName": "python",
-        "extName": ".md",
-        "fullPath": "/class/python.md"
-      }
-    ],
+    "cards": [],
     "nodes": [
       {
-        "name": "constructor",
-        "fullPath": "/class/constructor",
-        "asPath": "/class/constructor",
-        "id": "%2Fclass%2Fconstructor",
+        "name": "fibonacci",
+        "fullPath": "/algorithm/fibonacci",
+        "asPath": "/algorithm/fibonacci",
+        "id": "%2Falgorithm%2Ffibonacci",
         "parent": {
-          "name": "class",
-          "fullPath": "/class",
-          "asPath": "/class",
-          "id": "%2Fclass",
+          "name": "algorithm",
+          "fullPath": "/algorithm",
+          "asPath": "/algorithm",
+          "id": "%2Falgorithm",
           "readme": {
-            "title": "类",
-            "fullPath": "/class/README.md"
+            "title": "算法",
+            "fullPath": "/algorithm/README.md"
           }
         },
         "readme": {
-          "title": "构造函数",
-          "fullPath": "/class/constructor/README.md"
+          "title": "斐波那契数列",
+          "fullPath": "/algorithm/fibonacci/README.md"
         },
         "cards": [
           {
-            "name": "js.md",
-            "baseName": "js",
+            "name": "go.md",
+            "baseName": "go",
             "extName": ".md",
-            "fullPath": "/class/constructor/js.md"
+            "fullPath": "/algorithm/fibonacci/go.md"
           },
           {
             "name": "python.md",
             "baseName": "python",
             "extName": ".md",
-            "fullPath": "/class/constructor/python.md"
-          }
-        ],
-        "nodes": [
-          {
-            "name": "default-constructor",
-            "fullPath": "/class/constructor/default-constructor",
-            "asPath": "/class/constructor/default-constructor",
-            "id": "%2Fclass%2Fconstructor%2Fdefault-constructor",
-            "parent": {
-              "name": "constructor",
-              "fullPath": "/class/constructor",
-              "asPath": "/class/constructor",
-              "id": "%2Fclass%2Fconstructor",
-              "readme": {
-                "title": "构造函数",
-                "fullPath": "/class/constructor/README.md"
-              }
-            },
-            "readme": {
-              "fullPath": "/class/constructor/default-constructor/README.md"
-            },
-            "cards": [
-              {
-                "name": "js.md",
-                "baseName": "js",
-                "extName": ".md",
-                "fullPath": "/class/constructor/default-constructor/js.md"
-              },
-              {
-                "name": "python.md",
-                "baseName": "python",
-                "extName": ".md",
-                "fullPath": "/class/constructor/default-constructor/python.md"
-              }
-            ],
-            "nodes": []
-          }
-        ]
-      },
-      {
-        "name": "method",
-        "fullPath": "/class/method",
-        "asPath": "/class/method",
-        "id": "%2Fclass%2Fmethod",
-        "parent": {
-          "name": "class",
-          "fullPath": "/class",
-          "asPath": "/class",
-          "id": "%2Fclass",
-          "readme": {
-            "title": "类",
-            "fullPath": "/class/README.md"
-          }
-        },
-        "readme": {
-          "fullPath": "/class/method/README.md"
-        },
-        "cards": [
-          {
-            "name": "js.md",
-            "baseName": "js",
-            "extName": ".md",
-            "fullPath": "/class/method/js.md"
-          },
-          {
-            "name": "python.md",
-            "baseName": "python",
-            "extName": ".md",
-            "fullPath": "/class/method/python.md"
+            "fullPath": "/algorithm/fibonacci/python.md"
           }
         ],
         "nodes": []
@@ -137,61 +49,213 @@
     ]
   },
   {
-    "name": "函数",
-    "fullPath": "/函数",
-    "asPath": "/%E5%87%BD%E6%95%B0",
-    "id": "%2F%E5%87%BD%E6%95%B0",
+    "name": "basic-concept",
+    "fullPath": "/basic-concept",
+    "asPath": "/basic-concept",
+    "id": "%2Fbasic-concept",
     "parent": {},
     "readme": {
-      "fullPath": "/函数/README.md"
+      "title": "基础概念",
+      "fullPath": "/basic-concept/README.md"
     },
-    "cards": [
-      {
-        "name": "js.md",
-        "baseName": "js",
-        "extName": ".md",
-        "fullPath": "/函数/js.md"
-      },
-      {
-        "name": "python.md",
-        "baseName": "python",
-        "extName": ".md",
-        "fullPath": "/函数/python.md"
-      }
-    ],
+    "cards": [],
     "nodes": [
       {
-        "name": "参数",
-        "fullPath": "/函数/参数",
-        "asPath": "/%E5%87%BD%E6%95%B0/%E5%8F%82%E6%95%B0",
-        "id": "%2F%E5%87%BD%E6%95%B0%2F%E5%8F%82%E6%95%B0",
+        "name": "comment",
+        "fullPath": "/basic-concept/comment",
+        "asPath": "/basic-concept/comment",
+        "id": "%2Fbasic-concept%2Fcomment",
         "parent": {
-          "name": "函数",
-          "fullPath": "/函数",
-          "asPath": "/%E5%87%BD%E6%95%B0",
-          "id": "%2F%E5%87%BD%E6%95%B0",
+          "name": "basic-concept",
+          "fullPath": "/basic-concept",
+          "asPath": "/basic-concept",
+          "id": "%2Fbasic-concept",
           "readme": {
-            "fullPath": "/函数/README.md"
+            "title": "基础概念",
+            "fullPath": "/basic-concept/README.md"
           }
         },
         "readme": {
-          "fullPath": "/函数/参数/README.md"
+          "title": "注释",
+          "fullPath": "/basic-concept/comment/README.md"
         },
         "cards": [
           {
-            "name": "js.md",
-            "baseName": "js",
+            "name": "dart.md",
+            "baseName": "dart",
             "extName": ".md",
-            "fullPath": "/函数/参数/js.md"
+            "fullPath": "/basic-concept/comment/dart.md"
+          },
+          {
+            "name": "go.md",
+            "baseName": "go",
+            "extName": ".md",
+            "fullPath": "/basic-concept/comment/go.md"
           },
           {
             "name": "python.md",
             "baseName": "python",
             "extName": ".md",
-            "fullPath": "/函数/参数/python.md"
+            "fullPath": "/basic-concept/comment/python.md"
           }
         ],
         "nodes": []
+      },
+      {
+        "name": "helloword",
+        "fullPath": "/basic-concept/helloword",
+        "asPath": "/basic-concept/helloword",
+        "id": "%2Fbasic-concept%2Fhelloword",
+        "parent": {
+          "name": "basic-concept",
+          "fullPath": "/basic-concept",
+          "asPath": "/basic-concept",
+          "id": "%2Fbasic-concept",
+          "readme": {
+            "title": "基础概念",
+            "fullPath": "/basic-concept/README.md"
+          }
+        },
+        "readme": {
+          "title": "HelloWord",
+          "fullPath": "/basic-concept/helloword/README.md"
+        },
+        "cards": [
+          {
+            "name": "b.md",
+            "baseName": "b",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/b.md"
+          },
+          {
+            "name": "c.md",
+            "baseName": "c",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/c.md"
+          },
+          {
+            "name": "dart.md",
+            "baseName": "dart",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/dart.md"
+          },
+          {
+            "name": "go.md",
+            "baseName": "go",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/go.md"
+          },
+          {
+            "name": "js.md",
+            "baseName": "js",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/js.md"
+          },
+          {
+            "name": "python.md",
+            "baseName": "python",
+            "extName": ".md",
+            "fullPath": "/basic-concept/helloword/python.md"
+          }
+        ],
+        "nodes": []
+      }
+    ]
+  },
+  {
+    "name": "data-type",
+    "fullPath": "/data-type",
+    "asPath": "/data-type",
+    "id": "%2Fdata-type",
+    "parent": {},
+    "readme": {
+      "title": "数据类型",
+      "fullPath": "/data-type/README.md"
+    },
+    "cards": [],
+    "nodes": [
+      {
+        "name": "type-assert",
+        "fullPath": "/data-type/type-assert",
+        "asPath": "/data-type/type-assert",
+        "id": "%2Fdata-type%2Ftype-assert",
+        "parent": {
+          "name": "data-type",
+          "fullPath": "/data-type",
+          "asPath": "/data-type",
+          "id": "%2Fdata-type",
+          "readme": {
+            "title": "数据类型",
+            "fullPath": "/data-type/README.md"
+          }
+        },
+        "readme": {
+          "title": "数据类型判断",
+          "fullPath": "/data-type/type-assert/README.md"
+        },
+        "cards": [
+          {
+            "name": "dart.md",
+            "baseName": "dart",
+            "extName": ".md",
+            "fullPath": "/data-type/type-assert/dart.md"
+          },
+          {
+            "name": "go.md",
+            "baseName": "go",
+            "extName": ".md",
+            "fullPath": "/data-type/type-assert/go.md"
+          },
+          {
+            "name": "js.md",
+            "baseName": "js",
+            "extName": ".md",
+            "fullPath": "/data-type/type-assert/js.md"
+          },
+          {
+            "name": "python.md",
+            "baseName": "python",
+            "extName": ".md",
+            "fullPath": "/data-type/type-assert/python.md"
+          }
+        ],
+        "nodes": [
+          {
+            "name": "check-if-the-same-object",
+            "fullPath": "/data-type/type-assert/check-if-the-same-object",
+            "asPath": "/data-type/type-assert/check-if-the-same-object",
+            "id": "%2Fdata-type%2Ftype-assert%2Fcheck-if-the-same-object",
+            "parent": {
+              "name": "type-assert",
+              "fullPath": "/data-type/type-assert",
+              "asPath": "/data-type/type-assert",
+              "id": "%2Fdata-type%2Ftype-assert",
+              "readme": {
+                "title": "数据类型判断",
+                "fullPath": "/data-type/type-assert/README.md"
+              }
+            },
+            "readme": {
+              "title": "检查两个引用是否指向同一个对象(内存地址)",
+              "fullPath": "/data-type/type-assert/check-if-the-same-object/README.md"
+            },
+            "cards": [
+              {
+                "name": "dart.md",
+                "baseName": "dart",
+                "extName": ".md",
+                "fullPath": "/data-type/type-assert/check-if-the-same-object/dart.md"
+              },
+              {
+                "name": "js.md",
+                "baseName": "js",
+                "extName": ".md",
+                "fullPath": "/data-type/type-assert/check-if-the-same-object/js.md"
+              }
+            ],
+            "nodes": []
+          }
+        ]
       }
     ]
   }

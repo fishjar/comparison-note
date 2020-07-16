@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardGroup,
   Card,
@@ -18,7 +18,10 @@ import { findNav } from "../utils";
 
 export default function Post({ nav, content, cards = [] }) {
   // 对比显示的菜单组
-  const [menus, setMenus] = useState(cards.map(item => item.baseName));
+  const [menus, setMenus] = useState([]);
+  useEffect(() => {
+    setMenus(cards.map(item => item.baseName));
+  }, [cards]);
   const handleToggleCard = menus => {
     setMenus(menus);
   };
