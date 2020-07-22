@@ -114,6 +114,61 @@ fmt.Printf("%#v\n", w)
 // Wheel{Circle:Circle{Point:Point{X:42, Y:8}, Radius:5}, Spokes:20}
 ```
 
+一个 struct 类型也可能会有多个匿名字段。
+
+种类型的值便会拥有 Point 和 RGBA 类型的所有方法，
+以及直接定义在 ColoredPoint 中的方法。
+当编译器解析一个选择器到方法时，比如 p.ScaleBy，
+它会首先去找直接定义在这个类型里的 ScaleBy 方法，
+然后找被 ColoredPoint 的内嵌字段们引入的方法，
+然后去找 Point 和 RGBA 的内嵌字段引入的方法，然后一直递归向下找。
+如果选择器有二义性的话编译器会报错，比如你在同一级里有两个同名的方法。
+
+```go
+type ColoredPoint struct {
+    Point
+    color.RGBA
+}
+```
+
+一个小 trick
+
+```go
+var (
+    mu sync.Mutex // guards mapping
+    mapping = make(map[string]string)
+)
+
+func Lookup(key string) string {
+    mu.Lock()
+    v := mapping[key]
+    mu.Unlock()
+    return v
+}
+```
+
+改进后
+
+```go
+// 给新的变量起了一个更具表达性的名字：cache
+// 因为sync.Mutex字段也被嵌入到了这个struct里，
+// 其Lock和Unlock方法也就都被引入到了这个匿名结构中了
+var cache = struct {
+    sync.Mutex
+    mapping map[string]string
+}{
+    mapping: make(map[string]string),
+}
+
+
+func Lookup(key string) string {
+    cache.Lock()
+    v := cache.mapping[key]
+    cache.Unlock()
+    return v
+}
+```
+
 将一个 Go 语言中类似 movies 的结构体 slice 转为 JSON 的过程叫编组（marshaling）。
 编组通过调用 json.Marshal 函数完成
 
