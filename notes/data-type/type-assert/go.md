@@ -1,6 +1,17 @@
 ```go
-fmt.Println(reflect.TypeOf(x).String())
+// reflect.Type 接口是满足 fmt.Stringer 接口的
+t := reflect.TypeOf(3)  // a reflect.Type
+fmt.Println(t.String()) // "int"
+fmt.Println(t)          // "int"
+fmt.Printf("%T\n", 3)   // "int"
 
+// 表达接口类型的 reflect.Type
+var w io.Writer = os.Stdout
+fmt.Println(reflect.TypeOf(w)) // "*os.File"
+
+
+// fmt.Printf 提供了一个缩写 %T 参数，
+// 内部使用 reflect.TypeOf 来输出
 // 可以通过%T参数打印类型信息
 const noDelay time.Duration = 0
 const timeout = 5 * time.Minute
@@ -74,5 +85,22 @@ func main() {
         fmt.Println("list[%d] is of a different type", index)
     }
   }
+}
+```
+
+使用 `reflect.Type` 来打印任意值的类型和枚举它的方法：
+
+```go
+// Print prints the method set of the value x.
+func Print(x interface{}) {
+    v := reflect.ValueOf(x)
+    t := v.Type()
+    fmt.Printf("type %s\n", t)
+
+    for i := 0; i < v.NumMethod(); i++ {
+        methType := v.Method(i).Type()
+        fmt.Printf("func (%s) %s%s\n", t, t.Method(i).Name,
+            strings.TrimPrefix(methType.String(), "func"))
+    }
 }
 ```
