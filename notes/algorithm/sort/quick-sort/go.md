@@ -27,7 +27,7 @@ func quickSort(arr []int, start, end int) {
 // partition 分区
 func partition(arr []int, start, end int) int {
 	pivot := arr[end]              // 选取最后一个元素作为基准pivot
-	i := start                     // 中间位置的标记
+	i := start                     // 中间位置的标记，划分在右段
 	for j := start; j < end; j++ { // 最后一个元素就是基准所以不用比较
 		// 依次比较，如果元素比基准值小
 		// 就与标记中间位置元素交换，并把标记右移一位

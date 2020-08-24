@@ -18,7 +18,7 @@ func mergeSort(arr []int) []int {
 	mid := len(arr) / 2           // 中间分为两段
 	left := mergeSort(arr[:mid])  // 递归，对左段排序
 	right := mergeSort(arr[mid:]) // 递归，对右段排序
-	result := merge(left, right)  // 合并左段和右段，此时左段元素都是小于右段元素的
+	result := merge(left, right)  // 合并左段和右段
 	return result
 }
 
