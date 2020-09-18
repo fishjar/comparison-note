@@ -10,6 +10,7 @@ import (
 func SelectionSort(arr []int) []int {
 	for i := 0; i < len(arr); i++ {
 		min := i // 最小元素的序号
+		// 这里的j不能从0开始
 		for j := i; j < len(arr); j++ {
 			if arr[j] < arr[min] {
 				min = j

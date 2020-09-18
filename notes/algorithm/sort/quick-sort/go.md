@@ -33,6 +33,7 @@ func partition(arr []int, start, end int) int {
 		// 就与标记中间位置元素交换，并把标记右移一位
 		if arr[i] < midVal {
 			// 相同元素无需交换
+			// 交换也无影响
 			if midIdx != i {
 				swap(arr, midIdx, i)
 			}
@@ -41,6 +42,7 @@ func partition(arr []int, start, end int) int {
 	}
 	// 把基准值与中间位置交换
 	// 如果基准值刚好是最大值，midIdx等于end，无需交换
+	// 交换也无影响
 	if midIdx != end {
 		swap(arr, midIdx, end)
 	}
