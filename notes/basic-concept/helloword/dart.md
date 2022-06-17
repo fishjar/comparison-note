@@ -1,3 +1,13 @@
+- 所有能够使用变量引用的都是对象， 每个对象都是一个类的实例。
+  在 Dart 中 甚至连 数字、方法和 null 都是对象。
+  所有的对象都继承于 Object 类。
+- 没有指定类型的变量的类型为 dynamic
+- Dart 支持顶级方法 (例如 main())
+- Dart 还支持顶级变量，以及 在类中定义变量（静态变量和实例变量）。
+  实例变量有时候被称之为域（Fields）或者属性（Properties）
+- Dart 没有 public、 protected、 和 private 关键字。
+  如果一个标识符以 (\_) 开头，则该标识符 在库内是私有的。
+
 ```dart
 // helloword.dart
 // 定义个方法。

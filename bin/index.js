@@ -19,6 +19,10 @@ const matter = require("gray-matter");
     const filesList = fs.readdirSync(notesPath);
     // 文件和文件夹循环
     filesList.forEach(fileName => {
+      if (fileName === "images") {
+        return;
+      }
+
       const filePath = path.join(notesPath, fileName);
       const fullPath = `${parent.fullPath || ""}/${fileName}`;
       const stats = fs.statSync(filePath);

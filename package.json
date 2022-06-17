@@ -5,7 +5,7 @@
   "description": "对比学习笔记",
   "author": "Gabe Yuan <yugang2002@gmail.com>",
   "scripts": {
-    "nav": "node bin/index",
+    "nav": "node bin/index && mkdir -p src/public && cp -r notes/images src/public/",
     "dev": "next src",
     "build": "node bin/index && next build src",
     "start": "next start src",
