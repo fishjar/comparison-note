@@ -1,12 +1,11 @@
 ```rust
-// main.rs
+// helloword.rs
 fn main() {
     println!("Hello, world!");
 }
 ```
 
 ```sh
-$ rustc main.rs
-$ ./main
-Hello, world!
+rustc helloword.rs
+./helloword
 ```

@@ -1,8 +1,14 @@
 ```c
+// helloword.c
 #include <stdio.h>
 
-main( )
-{
+int main() {
     printf("hello, world\n");
+    return 0;
 }
+```
+
+```sh
+gcc -o helloword helloword.c
+./helloword
 ```
