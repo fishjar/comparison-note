@@ -1,4 +1,10 @@
 ```dart
+a = value;   // 给 a 变量赋值
+b ??= value; // 如果 b 是 null，则赋值给 b；
+             // 如果不是 null，则 b 的值保持不变
+```
+
+```dart
 // 不要 显式的把变量初始化为 null
 int _nextId;
 assert(_nextId == null);
