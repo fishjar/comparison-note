@@ -1,3 +1,146 @@
+一个结构体（struct）就是一组字段（field）。
+
+```go
+package main
+import "fmt"
+type Vertex struct {
+  X int
+  Y int
+}
+func main() {
+  fmt.Println(Vertex{1, 2})
+  fmt.Println(Vertex{X:1, Y:2})
+}
+
+// 结构体字段使用点号来访问。
+package main
+import "fmt"
+type Vertex struct {
+  X int
+  Y int
+}
+func main() {
+  v := Vertex{1, 2}
+  v.X = 4
+  fmt.Println(v.X)
+}
+
+
+// 如果我们有一个指向结构体的指针 p，
+// 那么可以通过 (*p).X 来访问其字段 X。
+//不过这么写太啰嗦了，所以语言也允许我们使用隐式间接引用，
+//直接写 p.X 就可以。
+package main
+import "fmt"
+type Vertex struct {
+  X int
+  Y int
+}
+func main() {
+  v := Vertex{1, 2}
+  p := &v
+  // var p int = &v
+  fmt.Println(p)
+  fmt.Println(*p)
+  p.X = 3
+  // (*p).X = 3
+  fmt.Println(v)
+}
+// &{1 2}
+// {1 2}
+// {3 2}
+
+
+// 仅列出部分字段。（字段名的顺序无关。）
+package main
+import "fmt"
+type Vertex struct {
+  X, Y int
+}
+var (
+  v1 = Vertex{1, 2}  // 创建一个 Vertex 类型的结构体
+  v2 = Vertex{X: 1}  // Y:0 被隐式地赋予
+  v3 = Vertex{}      // X:0 Y:0
+  p  = &Vertex{1, 2} // 创建一个 *Vertex 类型的结构体（指针）
+)
+func main() {
+  fmt.Println(v1, p, v2, v3)
+}
+// {1 2} &{1 2} {1 0} {0 0}
+
+
+// struct的匿名字段
+package main
+import "fmt"
+type Human struct {
+  name string
+  age int
+  weight int
+}
+
+type Student struct {
+  Human  // 匿名字段，那么默认Student就包含了Human的所有字段
+  speciality string
+}
+
+func main() {
+  // 我们初始化一个学生
+  mark := Student{Human{"Mark", 25, 120}, "Computer Science"}
+
+  // 我们访问相应的字段
+  fmt.Println("His name is ", mark.name)
+  fmt.Println("His age is ", mark.age)
+  fmt.Println("His weight is ", mark.weight)
+  fmt.Println("His speciality is ", mark.speciality)
+  // 修改对应的备注信息
+  mark.speciality = "AI"
+  fmt.Println("Mark changed his speciality")
+  fmt.Println("His speciality is ", mark.speciality)
+  // 修改他的年龄信息
+  fmt.Println("Mark become old")
+  mark.age = 46
+  fmt.Println("His age is", mark.age)
+  // 修改他的体重信息
+  fmt.Println("Mark is not an athlet anymore")
+  mark.weight += 60
+  fmt.Println("His weight is", mark.weight)
+}
+
+
+package main
+import "fmt"
+type Skills []string
+type Human struct {
+  name string
+  age int
+  weight int
+}
+type Student struct {
+  Human  // 匿名字段，struct
+  Skills // 匿名字段，自定义的类型string slice
+  int    // 内置类型作为匿名字段
+  speciality string
+}
+func main() {
+  // 初始化学生Jane
+  jane := Student{Human:Human{"Jane", 35, 100}, speciality:"Biology"}
+  // 现在我们来访问相应的字段
+  fmt.Println("Her name is ", jane.name)
+  fmt.Println("Her age is ", jane.age)
+  fmt.Println("Her weight is ", jane.weight)
+  fmt.Println("Her speciality is ", jane.speciality)
+  // 我们来修改他的skill技能字段
+  jane.Skills = []string{"anatomy"}
+  fmt.Println("Her skills are ", jane.Skills)
+  fmt.Println("She acquired two new ones ")
+  jane.Skills = append(jane.Skills, "physics", "golang")
+  fmt.Println("Her skills now are ", jane.Skills)
+  // 修改匿名内置类型字段
+  jane.int = 3
+  fmt.Println("Her preferred number is", jane.int)
+}
+```
+
 ```go
 type Employee struct {
     ID        int
