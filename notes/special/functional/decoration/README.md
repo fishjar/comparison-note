@@ -1,3 +1,3 @@
 ---
-title: 修饰器（装饰器）
+title: Decoraton 修饰器（装饰器）
 ---

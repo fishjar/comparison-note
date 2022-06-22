@@ -1,3 +1,3 @@
 ---
-title: 配置选项
+title: Options 配置选项
 ---
