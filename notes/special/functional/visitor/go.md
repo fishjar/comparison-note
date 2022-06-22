@@ -73,3 +73,189 @@ func main() {
 {"Width":100,"Heigh":200}
 <Rectangle><Width>100</Width><Heigh>200</Heigh></Rectangle>
 ```
+
+## kubectl 的实现方法
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+// 定义一个函数
+type VisitorFunc func(*Info, error) error
+
+// 定义一个接口
+type Visitor interface {
+	Visit(VisitorFunc) error
+}
+
+// 定义一个结构体
+type Info struct {
+	Namespace   string
+	Name        string
+	OtherThings string
+}
+
+// 实现接口
+func (info *Info) Visit(fn VisitorFunc) error {
+	fmt.Println("Info Visit()")
+	return fn(info, nil)
+}
+
+// 嵌入 visitor 字段
+type NameVisitor struct {
+	visitor Visitor
+}
+
+// 实现接口
+func (v NameVisitor) Visit(fn VisitorFunc) error {
+	fmt.Println("NameVisitor Visit()")
+	// 调用嵌入字段的同名函数
+	// 相当于调用套娃里面的同名函数
+	return v.visitor.Visit(func(info *Info, err error) error {
+		fmt.Println("NameVisitor() before call function")
+		err = fn(info, err) // 这里调用上层套娃函数
+		if err == nil {
+			fmt.Printf("==> Name=%s, NameSpace=%s\n", info.Name, info.Namespace)
+		}
+		fmt.Println("NameVisitor() after call function")
+		return err
+	})
+}
+
+type OtherThingsVisitor struct {
+	visitor Visitor
+}
+
+func (v OtherThingsVisitor) Visit(fn VisitorFunc) error {
+	fmt.Println("OtherThingsVisitor Visit()")
+	return v.visitor.Visit(func(info *Info, err error) error {
+		fmt.Println("OtherThingsVisitor() before call function")
+		err = fn(info, err)
+		if err == nil {
+			fmt.Printf("==> OtherThings=%s\n", info.OtherThings)
+		}
+		fmt.Println("OtherThingsVisitor() after call function")
+		return err
+	})
+}
+
+type LogVisitor struct {
+	visitor Visitor
+}
+
+func (v LogVisitor) Visit(fn VisitorFunc) error {
+	fmt.Println("LogVisitor Visit()")
+	return v.visitor.Visit(func(info *Info, err error) error {
+		fmt.Println("LogVisitor() before call function")
+		err = fn(info, err)
+		fmt.Println("LogVisitor() after call function")
+		return err
+	})
+}
+
+func main() {
+	info := Info{}
+	var v Visitor = &info
+	// v 结构体做了三次套娃
+	v = LogVisitor{v}
+	v = NameVisitor{v}
+	v = OtherThingsVisitor{v}
+
+	loadFile := func(info *Info, err error) error {
+		fmt.Println("loadFile()")
+		info.Name = "Hao Chen"
+		info.Namespace = "MegaEase"
+		info.OtherThings = "We are running as remote team."
+		return nil
+	}
+	v.Visit(loadFile)
+}
+```
+
+## visitor 修饰器
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type VisitorFunc func(*Info, error) error
+
+type Visitor interface {
+	Visit(VisitorFunc) error
+}
+
+type Info struct {
+	Namespace   string
+	Name        string
+	OtherThings string
+}
+
+func (info *Info) Visit(fn VisitorFunc) error {
+	fmt.Println("Info Visit()")
+	return fn(info, nil)
+}
+
+func NameVisitor(info *Info, err error) error {
+	fmt.Println("NameVisitor() before call function")
+	fmt.Printf("==> Name=%s, NameSpace=%s\n", info.Name, info.Namespace)
+	return err
+}
+
+func OtherVisitor(info *Info, err error) error {
+	fmt.Println("OtherThingsVisitor() before call function")
+	return err
+}
+
+type DecoratedVisitor struct {
+	visitor    Visitor
+	decorators []VisitorFunc
+}
+
+func NewDecoratedVisitor(v Visitor, fn ...VisitorFunc) Visitor {
+	if len(fn) == 0 {
+		return v
+	}
+	return DecoratedVisitor{v, fn}
+}
+
+func (v DecoratedVisitor) Visit(fn VisitorFunc) error {
+	fmt.Println("DecoratedVisitor Visit()")
+	return v.visitor.Visit(func(info *Info, err error) error {
+		fmt.Println("DecoratedVisitor v.visitor.Visit()")
+		if err != nil {
+			return err
+		}
+		if err := fn(info, nil); err != nil {
+			return err
+		}
+		for i := range v.decorators {
+			if err := v.decorators[i](info, nil); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+func main() {
+	info := Info{}
+	var v Visitor = &info
+	v = NewDecoratedVisitor(v, NameVisitor, OtherVisitor)
+
+	loadFile := func(info *Info, err error) error {
+		fmt.Println("loadFile()")
+		info.Name = "Hao Chen"
+		info.Namespace = "MegaEase"
+		info.OtherThings = "We are running as remote team."
+		return nil
+	}
+
+	v.Visit(loadFile)
+}
+```
