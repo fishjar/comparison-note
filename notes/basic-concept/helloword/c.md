@@ -9,6 +9,7 @@ int main() {
 ```
 
 ```sh
+# gcc -std=c99 hello.c
 gcc -o helloword helloword.c
 ./helloword
 ```
