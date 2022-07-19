@@ -1,4 +1,21 @@
 ```python
+x = """------
+Line 1
+Line 2
+Line 3
+------"""
+
+print("""\
+Usage: thingy [OPTIONS]
+     -h                        Display this usage message
+     -H hostname               Hostname to connect to
+""")
+
+text = ('Put several strings within parentheses '
+        'to have them joined together.')
+```
+
+```python
 some_string = "abcd"
 # 4
 print(len(some_string))

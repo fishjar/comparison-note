@@ -29,32 +29,3 @@ fmt.Printf("%s\n", s2)
 m := `hello
   world`
 ```
-
-js
-
-```js
-const x = `------
-Line 1
-Line 2
-Line 3
-------`;
-```
-
-python
-
-```python
-x = """------
-Line 1
-Line 2
-Line 3
-------"""
-
-print("""\
-Usage: thingy [OPTIONS]
-     -h                        Display this usage message
-     -H hostname               Hostname to connect to
-""")
-
-text = ('Put several strings within parentheses '
-        'to have them joined together.')
-```
