@@ -16,7 +16,7 @@ export default function Nav({ navs }) {
           >
             <a>{nav.readme.title || nav.name}</a>
           </Link>
-          {nav.cards.length>0 && " ["+nav.cards.map(c=>c.baseName).join(", ")+"]"}
+          <span style={{color: "#666"}}>{nav.cards.length>0 && " ["+nav.cards.map(c=>c.baseName).join(", ")+"]"}</span>
           {nav.nodes.length > 0 && makeNav(nav.nodes)}
         </li>
       ))}
