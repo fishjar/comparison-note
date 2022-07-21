@@ -432,16 +432,16 @@ type Float interface {
 
 - 基本接口(Basic interface)
   - 接口定义中如果只有方法
-- 通用接口(General interface)
+- 通用（一般）接口(General interface)
   - 接口内不光只有方法，还有类型
-  - 一般接口类型不能用来定义变量，只能用于泛型的类型约束中
+  - 通用接口类型不能用来定义变量，只能用于泛型的类型约束中
 
 ```go
-type Uint interface { // 接口 Uint 中有类型，所以是一般接口
+type Uint interface { // 接口 Uint 中有类型，所以是通用接口
     ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
-type ReadWriter interface {  // ReadWriter 接口既有方法也有类型，所以是一般接口
+type ReadWriter interface {  // ReadWriter 接口既有方法也有类型，所以是通用接口
     ~string | ~[]rune
 
     Read(p []byte) (n int, err error)
@@ -454,5 +454,5 @@ type Uint interface {
     ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
 }
 
-var uintInf Uint // 错误。Uint是一般接口，只能用于类型约束，不得用于变量定义
+var uintInf Uint // 错误。Uint是通用接口，只能用于类型约束，不得用于变量定义
 ```
