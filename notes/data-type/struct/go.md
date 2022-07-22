@@ -389,3 +389,42 @@ if err := json.Unmarshal(data, &titles); err != nil {
 }
 fmt.Println(titles) // "[{Casablanca} {Cool Hand Luke} {Bullitt}]"
 ```
+
+## 结构体嵌入
+
+```go
+package main
+import "fmt"
+
+type base struct {
+    num int
+}
+func (b base) describe() string {
+    return fmt.Sprintf("base with num=%v", b.num)
+}
+
+type container struct {
+    base
+    str string
+}
+
+func main() {
+    co := container{
+        base: base{
+            num: 1,
+        },
+        str: "some name",
+    }
+
+    fmt.Printf("co={num: %v, str: %v}\n", co.num, co.str)
+    fmt.Println("also num:", co.base.num)
+    fmt.Println("describe:", co.describe())
+
+    // 因为嵌入了 base ，在这里我们看到 container 也实现了 describer 接口
+    type describer interface {
+        describe() string
+    }
+    var d describer = co
+    fmt.Println("describer:", d.describe())
+}
+```

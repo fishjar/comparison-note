@@ -97,3 +97,24 @@ func shouldEscape(c byte) bool {
   return false
 }
 ```
+
+类型开关 (type switch) 比较类型而非值。可以用来发现一个接口值的类型。
+
+```go
+whatAmI := func(i interface{}) {
+  switch t := i.(type) {
+  case bool:
+    fmt.Println("I'm a bool")
+  case int:
+    fmt.Println("I'm an int")
+  default:
+    fmt.Printf("Don't know type %T\n", t)
+  }
+}
+whatAmI(true)
+whatAmI(1)
+whatAmI("hey")
+// I'm a bool
+// I'm an int
+// Don't know type string
+```
