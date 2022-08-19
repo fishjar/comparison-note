@@ -229,3 +229,13 @@ func main() {
   </body>
 </html>
 ```
+
+## 优化
+
+```sh
+# 优化前命令
+GOOS=js GOARCH=wasm go build -o ./wasm.wasm ./main.go
+
+# 利用 tinygo
+tinygo build -o ./wasm.wasm -target wasm -no-debug
+```
