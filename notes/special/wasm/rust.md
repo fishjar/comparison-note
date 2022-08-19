@@ -131,6 +131,8 @@ npm run serve
 
 ## 更多例子
 
+参考： https://rustwasm.github.io/wasm-bindgen/examples/index.html
+
 ```sh
 wasm-pack build --target web --debug
 
