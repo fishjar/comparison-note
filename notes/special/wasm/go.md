@@ -11,7 +11,7 @@ func main() {
 ```
 
 ```sh
-GOOS=js GOARCH=wasm go build -o main.wasm
+GOOS=js GOARCH=wasm go build -o main.wasm .
 ```
 
 ## 使用
@@ -59,7 +59,7 @@ import "syscall/js"
 
 func fib(i int) int {
 	if i == 0 || i == 1 {
-		return 1
+		return i
 	}
 	return fib(i-1) + fib(i-2)
 }
@@ -114,7 +114,7 @@ import (
 
 func fib(i int) int {
 	if i == 0 || i == 1 {
-		return 1
+		return i
 	}
 	return fib(i-1) + fib(i-2)
 }
@@ -178,7 +178,7 @@ import (
 
 func fib(i int) int {
 	if i == 0 || i == 1 {
-		return 1
+		return i
 	}
 	return fib(i-1) + fib(i-2)
 }
@@ -230,12 +230,76 @@ func main() {
 </html>
 ```
 
+### Performance - JavaScript vs Go
+
+```go
+package main
+
+import "syscall/js"
+
+func fib(i int) int {
+	if i == 0 || i == 1 {
+		return i
+	}
+	return fib(i-1) + fib(i-2)
+}
+
+func fibFunc(this js.Value, args []js.Value) interface{} {
+	return js.ValueOf(fib(args[0].Int()))
+}
+
+func main() {
+	done := make(chan int)
+	js.Global().Set("fibFunc", js.FuncOf(fibFunc))
+	<-done
+}
+```
+
+```html
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="./wasm_exec.js"></script>
+    <script type="module">
+      function fibonacciInJs(n) {
+        if (n <= 1) return n;
+        return fibonacciInJs(n - 1) + fibonacciInJs(n - 2);
+      }
+
+      async function run() {
+        const go = new Go();
+        const result = await WebAssembly.instantiateStreaming(
+          fetch("main.wasm"),
+          go.importObject
+        );
+        go.run(result.instance);
+
+        const num = 20;
+
+        console.time("Fibonnaci in go");
+        const fibGo = fibFunc(num);
+        console.timeEnd("Fibonnaci in go");
+
+        console.time("Fibonnaci in JS");
+        const fibJS = fibonacciInJs(num);
+        console.timeEnd("Fibonnaci in JS");
+
+        document.body.textContent = `Fib ${num}: Go ${fibGo} - JS ${fibJS}`;
+      }
+
+      run();
+    </script>
+  </head>
+  <body></body>
+</html>
+```
+
 ## 优化
 
 ```sh
 # 优化前命令
-GOOS=js GOARCH=wasm go build -o ./wasm.wasm ./main.go
+GOOS=js GOARCH=wasm go build -o ./main.wasm ./main.go
 
 # 利用 tinygo
-tinygo build -o ./wasm.wasm -target wasm -no-debug
+tinygo build -o ./main.wasm -target wasm ./main.go
 ```
