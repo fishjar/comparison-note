@@ -302,4 +302,5 @@ GOOS=js GOARCH=wasm go build -o ./main.wasm ./main.go
 
 # 利用 tinygo
 tinygo build -o ./main.wasm -target wasm ./main.go
+tinygo build -o ./main.wasm -target wasm -no-debug ./main.go
 ```
