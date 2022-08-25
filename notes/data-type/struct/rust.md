@@ -24,6 +24,11 @@ fn main() {
     user1.email = String::from("anotheremail@example.com");
     println!("{:?}", user1);
 
+    // 在这个例子中，我们在创建 user2 后不能再使用 user1，
+    // 因为 user1 的 username 字段中的 String 被移到 user2 中。
+    // 如果我们给 user2 的 email 和 username 都赋予新的 String 值，
+    // 从而只使用 user1 的 active 和 sign_in_count 值，
+    // 那么 user1 在创建 user2 后仍然有效。
     let user2 = User {
         email: String::from("another@example.com"),
         ..user1
@@ -77,6 +82,45 @@ fn main() {
         "The area of the rectangle is {} square pixels.",
         rect1.area()
     );
+}
+```
+
+## 打印结构体
+
+```rust
+// 在结构体定义之前加上外部属性 #[derive(Debug)]
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let rect1 = Rectangle {
+        width: 30,
+        height: 50,
+    };
+
+    println!("rect1 is {:?}", rect1);
+}
+```
+
+```rust
+// 使用 dbg! 宏
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let scale = 2;
+    let rect1 = Rectangle {
+        width: dbg!(30 * scale),
+        height: 50,
+    };
+
+    dbg!(&rect1);
 }
 ```
 

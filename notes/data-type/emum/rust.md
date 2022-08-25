@@ -22,6 +22,7 @@ fn main() {
 ```
 
 ```rust
+// 用枚举替代结构体还有另一个优势：每个成员可以处理不同类型和数量的数据。
 #![allow(unused)]
 fn main() {
     enum IpAddr {
@@ -86,7 +87,7 @@ fn main() {
 }
 ```
 
-## 匹配 Option<T>
+## 匹配 `Option<T>`
 
 ```rust
 fn main() {
@@ -118,6 +119,7 @@ fn main() {
 ```
 
 ## if let 简单控制流
+
 ```rust
 let some_u8_value = Some(0u8);
 match some_u8_value {

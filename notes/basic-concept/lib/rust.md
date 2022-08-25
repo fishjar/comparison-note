@@ -20,6 +20,19 @@
 cargo new --lib restaurant
 ```
 
+```sh
+# 模块树
+crate
+ └── front_of_house
+     ├── hosting
+     │   ├── add_to_waitlist
+     │   └── seat_at_table
+     └── serving
+         ├── take_order
+         ├── serve_order
+         └── take_payment
+```
+
 ```rust
 // src/lib.rs
 #![allow(unused)]
@@ -63,6 +76,69 @@ pub fn eat_at_restaurant() {
 }
 ```
 
+### 使用 super 起始的相对路径
+
+```rust
+fn serve_order() {}
+mod back_of_house {
+    fn fix_incorrect_order() {
+        cook_order();
+        super::serve_order();
+    }
+    fn cook_order() {}
+}
+```
+
+## 创建公有的结构体和枚举
+
+```rust
+mod back_of_house {
+    // 如果我们在一个结构体定义的前面使用了 pub ，
+    // 这个结构体会变成公有的，但是这个结构体的字段仍然是私有的。
+    pub struct Breakfast {
+        pub toast: String,
+        seasonal_fruit: String,
+    }
+
+    impl Breakfast {
+        // 想当于静态方法
+        pub fn summer(toast: &str) -> Breakfast {
+            Breakfast {
+                toast: String::from(toast),
+                seasonal_fruit: String::from("peaches"),
+            }
+        }
+    }
+}
+
+pub fn eat_at_restaurant() {
+    // Order a breakfast in the summer with Rye toast
+    let mut meal = back_of_house::Breakfast::summer("Rye");
+    // Change our mind about what bread we'd like
+    meal.toast = String::from("Wheat"); // 公有字段
+    println!("I'd like {} toast please", meal.toast);
+
+    // The next line won't compile if we uncomment it; we're not allowed
+    // to see or modify the seasonal fruit that comes with the meal
+    // meal.seasonal_fruit = String::from("blueberries"); // 私有字段
+}
+```
+
+```rust
+mod back_of_house {
+    // 如果我们将枚举设为公有，则它的所有成员都将变为公有。
+    pub enum Appetizer {
+        Soup,
+        Salad,
+    }
+}
+
+pub fn eat_at_restaurant() {
+    let order1 = back_of_house::Appetizer::Soup;
+    let order2 = back_of_house::Appetizer::Salad;
+}
+```
+
 ## 使用 use 关键字将名称引入作用域
 
 ```rust
@@ -100,7 +176,6 @@ fn main() {
 }
 ```
 
-
 ```rust
 mod front_of_house {
     pub mod hosting {
@@ -108,6 +183,7 @@ mod front_of_house {
     }
 }
 
+// 使用 pub use 重导出名称
 pub use crate::front_of_house::hosting; // 引入并导出
 
 pub fn eat_at_restaurant() {
@@ -116,4 +192,85 @@ pub fn eat_at_restaurant() {
     hosting::add_to_waitlist();
 }
 fn main() {}
+```
+
+## 使用 as 关键字提供新的名称
+
+```rust
+use std::fmt::Result;
+use std::io::Result as IoResult;
+
+fn function1() -> Result {
+    // --snip--
+}
+
+fn function2() -> IoResult<()> {
+    // --snip--
+}
+```
+
+## 使用外部包
+
+```toml
+[dependencies]
+rand = "0.8.3"
+```
+
+```rust
+use rand::Rng;
+fn main() {
+    let secret_number = rand::thread_rng().gen_range(1..101);
+}
+```
+
+```rust
+use std::cmp::Ordering;
+use std::io;
+
+// 与上面写法相同
+use std::{cmp::Ordering, io};
+
+
+use std::io;
+use std::io::Write;
+
+// 与上面写法相同
+use std::io::{self, Write};
+
+// 将一个路径下 所有 公有项引入作用域
+use std::collections::*;
+```
+
+## 将模块分割进不同文件
+
+```rust
+// src/lib.rs
+
+// 在 mod front_of_house 后使用分号，而不是代码块，
+// 这将告诉 Rust 在另一个与模块同名的文件中加载模块的内容。
+mod front_of_house;
+
+pub use crate::front_of_house::hosting;
+
+pub fn eat_at_restaurant() {
+    hosting::add_to_waitlist();
+    hosting::add_to_waitlist();
+    hosting::add_to_waitlist();
+}
+```
+
+```rust
+// src/front_of_house.rs
+
+// pub mod hosting {
+//     pub fn add_to_waitlist() {}
+// }
+
+// 继续重构，将 hosting 模块也提取到其自己的文件中
+pub mod hosting;
+```
+
+```rust
+// src/front_of_house/hosting.rs
+pub fn add_to_waitlist() {}
 ```
