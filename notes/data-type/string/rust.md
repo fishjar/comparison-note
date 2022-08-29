@@ -1,10 +1,15 @@
-- 字节（u8）
-- 字符（char）
+- 字节 byte（`u8`）
+- 字符 character（`char`）
   - 含一个或多个字节
 - 字形簇（字母）
-- 字符串 &str
-  - `slice`（`string slice`）是 `String` 中一部分值的引用
-- String
+- 字符串 string（`String`）
+  - `String` 是 `string` 的一种类型
+  - 类似还有 `OsString`, `OsStr`, `CString`, and `CStr`
+- 字符串切片 string slice (`str`)
+  - string slice 是 `String` 中一部分值的引用
+  - 通常是借用的形式 `&str`
+
+## 创建 String
 
 ```rust
 // 新建一个空的 String
@@ -13,24 +18,36 @@ let mut s = String::new();
 // 使用 String::from 函数从字符串字面量创建 String
 let mut s = String::from("hello");
 
-// 使用 push_str 方法向 String 附加字符串 slice
-s.push_str(", world!"); // push_str() 在字符串后追加字面值
-println!("{}", s); // 将打印 `hello, world!`
-
-// 使用 push 将单个字符加入 String 值中
-let mut s = String::from("lo");
-s.push('l');
-
-// 使用 to_string 方法
+// 使用 to_string 方法创建 String
 let data = "initial contents";
 let s = data.to_string();
 
 // 该方法也可直接用于字符串字面量：
 let s = "initial contents".to_string();
+```
 
-// 使用 + 运算符或 format! 宏拼接字符串
+## 更新 String
+
+```rust
+// 使用 push_str 方法向 String 附加字符串 slice
+let mut s = String::from("foo");
+s.push_str("bar");
+
+// push_str 不会获取所有权
+let mut s1 = String::from("foo");
+let s2 = "bar";
+s1.push_str(s2);
+println!("s2 is {}", s2);
+
+// 使用 push 将单个字符加入 String 值中
+let mut s = String::from("lo");
+s.push('l');
+
+// 使用 + 运算符或 format! 宏拼接 String
 let s1 = String::from("Hello, ");
 let s2 = String::from("world!");
+// 不需要 s2 的所有权，所以加上 &
+// 并且 &String 类型被强转成 &str，即 &s2 被转成 &s2[..]
 let s3 = s1 + &s2; // 注意 s1 被移动了，不能继续使用
 // 因为 add 没有获取参数的所有权，所以 s2 在这个操作后仍然是有效的 String
 ```

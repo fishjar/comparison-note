@@ -274,3 +274,169 @@ pub mod hosting;
 // src/front_of_house/hosting.rs
 pub fn add_to_waitlist() {}
 ```
+
+## 使用 pub use 导出合适的公有 API
+
+```rust
+// src/lib.rs
+//! # Art
+//!
+//! A library for modeling artistic concepts.
+
+pub mod kinds {
+    /// The primary colors according to the RYB color model.
+    pub enum PrimaryColor {
+        Red,
+        Yellow,
+        Blue,
+    }
+
+    /// The secondary colors according to the RYB color model.
+    pub enum SecondaryColor {
+        Orange,
+        Green,
+        Purple,
+    }
+}
+
+pub mod utils {
+    use crate::kinds::*;
+
+    /// Combines two primary colors in equal amounts to create
+    /// a secondary color.
+    pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> SecondaryColor {
+        // --snip--
+    }
+}
+```
+
+```rust
+// src/main.rs
+use art::kinds::PrimaryColor; // 全路径
+use art::utils::mix;
+
+fn main() {
+    let red = PrimaryColor::Red;
+    let yellow = PrimaryColor::Yellow;
+    mix(red, yellow);
+}
+```
+
+使用 pub use 语句导出
+
+```rust
+// src/lib.rs
+//! # Art
+//!
+//! A library for modeling artistic concepts.
+
+pub use self::kinds::PrimaryColor;
+pub use self::kinds::SecondaryColor;
+pub use self::utils::mix;
+
+pub mod kinds {
+    // --snip--
+}
+
+pub mod utils {
+    // --snip--
+}
+```
+
+```rust
+// src/main.rs
+use art::PrimaryColor; // 导出后路径变短
+use art::mix;
+
+fn main() {
+    // --snip--
+}
+```
+
+## 工作空间
+
+### 创建工作空间
+
+```sh
+mkdir add
+cd add
+cargo new adder
+cargo new add-one --lib
+
+# 构建整个工作空间
+cargo build
+```
+
+- 这个 `Cargo.toml` 文件配置了整个工作空间。
+- 它不会包含 `[package]` 或其他我们在 `Cargo.toml` 中见过的元信息。
+- 相反，它以 `[workspace]` 部分作为开始，并通过指定 `adder` 的路径来为工作空间增加成员
+- 工作空间只在根目录有一个`Cargo.lock`，而不是在每一个 `crate` 目录都有 `Cargo.lock`。
+  - 这确保了所有的 `crate` 都使用完全相同版本的依赖。
+- `adder` 并没有自己的 `target` 目录
+- 即使进入 `adder` 目录运行 `cargo build`，构建结果也位于 `add/target` 而不是 `add/adder/target`
+- 如果你选择向 `crates.io` 发布工作空间中的 `crate`，每一个工作空间中的 `crate` 需要单独发布。
+  - 必须进入每一个 crate 的目录并运行 `cargo publish` 来发布工作空间中的每一个 crate。
+
+```toml
+# Cargo.toml
+[workspace]
+members = [
+    "adder",
+    "add-one",
+]
+```
+
+```sh
+├── Cargo.lock
+├── Cargo.toml
+├── add-one
+│   ├── Cargo.toml
+│   └── src
+│       └── lib.rs
+├── adder
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+└── target
+```
+
+### 调用工作空间的 create
+
+```rust
+// add-one/src/lib.rs
+pub fn add_one(x: i32) -> i32 {
+    x + 1
+}
+```
+
+```toml
+# adder/Cargo.toml
+[dependencies]
+add-one = { path = "../add-one" }
+```
+
+```rust
+// adder/src/main.rs
+use add_one;
+fn main() {
+    let num = 10;
+    println!("Hello, world! {} plus one is {}!", num, add_one::add_one(num));
+}
+```
+
+### 依赖外部 crate
+
+```toml
+# add-one/Cargo.toml
+[dependencies]
+rand = "0.5.5"
+```
+
+## 使用 cargo install 从 Crates.io 安装二进制文件
+
+`cargo install` 的二进制文件都安装到 Rust 安装根目录的 `bin` 文件夹中。
+如果你使用 `rustup.rs` 安装的 Rust 且没有自定义任何配置，这将是`$HOME/.cargo/bin`
+
+```sh
+cargo install ripgrep
+```

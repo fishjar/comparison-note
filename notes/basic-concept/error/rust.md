@@ -1,6 +1,31 @@
 - 可恢复错误 `Result<T, E>`
 - 不可恢复(遇到错误时停止程序执行)错误 `panic!`
 
+## 标准输出/标准错误
+
+大部分终端都提供了两种输出：
+
+- 标准输出（standard output，`stdout`）对应一般信息，
+- 标准错误（standard error，`stderr`）则用于错误信息。
+
+这种区别允许用户选择将程序正常输出定向到一个文件中并仍将错误信息打印到屏幕上。
+但是 `println!` 函数只能够打印到标准输出，所以我们必须使用其他方法来打印到标准错误。
+标准库提供了 `eprintln!` 宏来打印到标准错误流。
+
+```rust
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+    if let Err(e) = minigrep::run(config) {
+        eprintln!("Application error: {}", e);
+        process::exit(1);
+    }
+}
+```
+
 ## 对应 panic 时的栈展开或终止
 
 ```toml
@@ -101,6 +126,19 @@ fn read_username_from_file() -> Result<String, io::Error> {
     let mut s = String::new();
     f.read_to_string(&mut s)?;
     Ok(s)
+}
+
+// 简写
+fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+    args.next();
+    // let query = match args.next() {
+    //     Some(arg) => arg,
+    //     None => return Err("Didn't get a query string"),
+    // };
+    let query = args.next().ok_or("Didn't get a query string")?;
+    Ok(Config {
+        query,
+    })
 }
 
 // 链式方法调用
