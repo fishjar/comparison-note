@@ -148,3 +148,283 @@ impl ops::Deref for String {
     }
 }
 ```
+
+## 使用 Drop Trait 运行清理代码
+
+```rust
+struct CustomSmartPointer {
+    data: String,
+}
+
+impl Drop for CustomSmartPointer {
+    fn drop(&mut self) {
+        println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+    }
+}
+
+fn main() {
+    let c = CustomSmartPointer { data: String::from("my stuff") };
+    let d = CustomSmartPointer { data: String::from("other stuff") };
+    println!("CustomSmartPointers created.");
+}
+```
+
+```rust
+fn main() {
+    let c = CustomSmartPointer { data: String::from("some data") };
+    println!("CustomSmartPointer created.");
+    // 通过 std::mem::drop 提早丢弃值
+    drop(c);
+    println!("CustomSmartPointer dropped before the end of main.");
+}
+```
+
+## `Rc<T>` 引用计数智能指针
+
+- Rust 有一个叫做 `Rc<T>` 的类型。其名称为 引用计数（reference counting）的缩写。
+- `Rc<T>` 只能用于单线程场景
+
+- 修改 `List` 的定义为使用 `Rc<T>` 代替 `Box<T>`
+- 每次调用 `Rc::clone`，`Rc<List>` 中数据的引用计数都会增加，直到有零个引用之前其数据都不会被清理。
+- 也可以调用 `a.clone()` 而不是 `Rc::clone(&a)`
+- `Rc::clone` 的实现并不像大部分类型的 clone 实现那样对所有数据进行深拷贝。
+  `Rc::clone` 只会增加引用计数，这并不会花费多少时间。
+
+```rust
+enum List {
+    Cons(i32, Rc<List>),
+    Nil,
+}
+use crate::List::{Cons, Nil};
+use std::rc::Rc
+fn main() {
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    // 调用 Rc::clone 函数并传递 a 中 Rc<List> 的引用作为参数。
+    let b = Cons(3, Rc::clone(&a));
+    let c = Cons(4, Rc::clone(&a));
+}
+```
+
+```rust
+// 打印出引用计数
+// count after creating a = 1
+// count after creating b = 2
+// count after creating c = 3
+// count after c goes out of scope = 2
+fn main() {
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    println!("count after creating a = {}", Rc::strong_count(&a));
+    let b = Cons(3, Rc::clone(&a));
+    println!("count after creating b = {}", Rc::strong_count(&a));
+    {
+        let c = Cons(4, Rc::clone(&a));
+        println!("count after creating c = {}", Rc::strong_count(&a));
+    }
+    println!("count after c goes out of scope = {}", Rc::strong_count(&a));
+}
+```
+
+## `RefCell<T>` 和内部可变性模式
+
+- `RefCell<T>` 记录当前有多少个活动的 `Ref<T>` 和 `RefMut<T>` 智能指针。
+- 每次调用 `borrow`，`RefCell<T>` 将活动的不可变借用计数加一。
+- 当 `Ref<T>` 值离开作用域时，不可变借用计数减一。
+- `RefCell<T>` 在任何时候只允许有多个不可变借用或一个可变借用。
+
+```rust
+pub trait Messenger {
+    fn send(&self, msg: &str);
+}
+pub struct LimitTracker<'a, T: Messenger> {
+    messenger: &'a T,
+    value: usize,
+    max: usize,
+}
+impl<'a, T> LimitTracker<'a, T>
+    where T: Messenger {
+    pub fn new(messenger: &T, max: usize) -> LimitTracker<T> {
+        LimitTracker {
+            messenger,
+            value: 0,
+            max,
+        }
+    }
+    pub fn set_value(&mut self, value: usize) {
+        self.value = value;
+
+        let percentage_of_max = self.value as f64 / self.max as f64;
+
+        if percentage_of_max >= 1.0 {
+            self.messenger.send("Error: You are over your quota!");
+        } else if percentage_of_max >= 0.9 {
+             self.messenger.send("Urgent warning: You've used up over 90% of your quota!");
+        } else if percentage_of_max >= 0.75 {
+            self.messenger.send("Warning: You've used up over 75% of your quota!");
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::RefCell;
+    struct MockMessenger {
+        sent_messages: RefCell<Vec<String>>,
+    }
+    impl MockMessenger {
+        fn new() -> MockMessenger {
+            MockMessenger { sent_messages: RefCell::new(vec![]) }
+        }
+    }
+    impl Messenger for MockMessenger {
+        fn send(&self, message: &str) {
+            // borrow_mut 方法返回 RefMut<T> 类型的智能指针
+            self.sent_messages.borrow_mut().push(String::from(message));
+        }
+    }
+    #[test]
+    fn it_sends_an_over_75_percent_warning_message() {
+        let mock_messenger = MockMessenger::new();
+        let mut limit_tracker = LimitTracker::new(&mock_messenger, 100);
+        limit_tracker.set_value(80);
+        // borrow 方法返回 Ref<T> 类型的智能指针
+        assert_eq!(mock_messenger.sent_messages.borrow().len(), 1);
+    }
+}
+```
+
+## 结合 `Rc<T>` 和 `RefCell<T>` 来拥有多个可变数据所有者
+
+```rust
+#[derive(Debug)]
+enum List {
+    Cons(Rc<RefCell<i32>>, Rc<List>),
+    Nil,
+}
+
+use crate::List::{Cons, Nil};
+use std::rc::Rc;
+use std::cell::RefCell;
+
+fn main() {
+    let value = Rc::new(RefCell::new(5));
+    let a = Rc::new(Cons(Rc::clone(&value), Rc::new(Nil)));
+    let b = Cons(Rc::new(RefCell::new(6)), Rc::clone(&a));
+    let c = Cons(Rc::new(RefCell::new(10)), Rc::clone(&a));
+    // borrow_mut 方法返回 RefMut<T> 智能指针，可以对其使用解引用运算符并修改其内部值。
+    *value.borrow_mut() += 10;
+    println!("a after = {:?}", a);
+    println!("b after = {:?}", b);
+    println!("c after = {:?}", c);
+}
+// a after = Cons(RefCell { value: 15 }, Nil)
+// b after = Cons(RefCell { value: 6 }, Cons(RefCell { value: 15 }, Nil))
+// c after = Cons(RefCell { value: 10 }, Cons(RefCell { value: 15 }, Nil))
+```
+
+## 引用循环与内存泄漏
+
+```rust
+use crate::List::{Cons, Nil};
+use std::rc::Rc;
+use std::cell::RefCell;
+#[derive(Debug)]
+enum List {
+    Cons(i32, RefCell<Rc<List>>),
+    Nil,
+}
+
+impl List {
+    fn tail(&self) -> Option<&RefCell<Rc<List>>> {
+        match self {
+            Cons(_, item) => Some(item),
+            Nil => None,
+        }
+    }
+}
+
+fn main() {
+    let a = Rc::new(Cons(5, RefCell::new(Rc::new(Nil))));
+
+    println!("a initial rc count = {}", Rc::strong_count(&a));
+    println!("a next item = {:?}", a.tail());
+
+    let b = Rc::new(Cons(10, RefCell::new(Rc::clone(&a))));
+
+    println!("a rc count after b creation = {}", Rc::strong_count(&a));
+    println!("b initial rc count = {}", Rc::strong_count(&b));
+    println!("b next item = {:?}", b.tail());
+
+    if let Some(link) = a.tail() {
+        // 创建引用循环
+        *link.borrow_mut() = Rc::clone(&b);
+    }
+
+    println!("b rc count after changing a = {}", Rc::strong_count(&b));
+    println!("a rc count after changing a = {}", Rc::strong_count(&a));
+
+    // Uncomment the next line to see that we have a cycle;
+    // it will overflow the stack
+    // println!("a next item = {:?}", a.tail());
+}
+```
+
+## 避免引用循环：将 `Rc<T>` 变为 `Weak<T>`
+
+```rust
+use std::rc::{Rc, Weak};
+use std::cell::RefCell;
+
+#[derive(Debug)]
+struct Node {
+    value: i32,
+    parent: RefCell<Weak<Node>>,
+    children: RefCell<Vec<Rc<Node>>>,
+}
+
+fn main() {
+    // leaf 开始时没有父节点，所以我们新建了一个空的 Weak 引用实例。
+    let leaf = Rc::new(Node {
+        value: 3,
+        parent: RefCell::new(Weak::new()),
+        children: RefCell::new(vec![]),
+    });
+
+    println!(
+        "leaf strong = {}, weak = {}",
+        Rc::strong_count(&leaf),
+        Rc::weak_count(&leaf),
+    );
+
+    {
+        let branch = Rc::new(Node {
+            value: 5,
+            parent: RefCell::new(Weak::new()),
+            children: RefCell::new(vec![Rc::clone(&leaf)]),
+        });
+
+        // 修改 leaf 使其拥有指向父节点的 Weak<Node> 引用。
+        // 使用了 Rc::downgrade 函数创建了一个指向 branch 的 Weak<Node> 引用。
+        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+
+        println!(
+            "branch strong = {}, weak = {}",
+            Rc::strong_count(&branch),
+            Rc::weak_count(&branch),
+        );
+
+        println!(
+            "leaf strong = {}, weak = {}",
+            Rc::strong_count(&leaf),
+            Rc::weak_count(&leaf),
+        );
+    }
+
+    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+    println!(
+        "leaf strong = {}, weak = {}",
+        Rc::strong_count(&leaf),
+        Rc::weak_count(&leaf),
+    );
+}
+```
