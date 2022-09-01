@@ -157,3 +157,197 @@ impl<T: Display + PartialOrd> Pair<T> {
     }
 }
 ```
+
+## 关联类型在 trait 定义中指定占位符类型
+
+关联类型（associated types）是一个将类型占位符与 trait 相关联的方式，这样 trait 的方法签名中就可以使用这些占位符类型。
+
+```rust
+// Iterator trait 的定义中带有关联类型 Item
+// 这里没有泛型参数 T
+// 我们只能选择一次 Item 会是什么类型
+pub trait Iterator {
+    type Item;
+    fn next(&mut self) -> Option<Self::Item>;
+}
+impl Iterator for Counter {
+    // 这里指定 trait 定义里面的 Item 的类型
+    type Item = u32;
+    fn next(&mut self) -> Option<Self::Item> {}
+}
+
+// 一个使用泛型的 Iterator trait 假想定义
+pub trait Iterator<T> {
+    fn next(&mut self) -> Option<T>;
+}
+```
+
+## 默认泛型类型参数和运算符重载
+
+```rust
+// 实现 Add trait 重载 Point 实例的 + 运算符
+use std::ops::Add;
+#[derive(Debug, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+// 使用默认 RHS 参数
+impl Add for Point {
+    // Add trait 有一个叫做 Output 的关联类型，它用来决定 add 方法的返回值类型。
+    type Output = Point;
+    fn add(self, other: Point) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+fn main() {
+    assert_eq!(Point { x: 1, y: 0 } + Point { x: 2, y: 3 },
+               Point { x: 3, y: 3 });
+}
+```
+
+```rust
+// Add trait 的定义
+trait Add<RHS=Self> {
+    type Output;
+    fn add(self, rhs: RHS) -> Self::Output;
+}
+```
+
+```rust
+// 在 Millimeters 上实现 Add，以便能够将 Millimeters 与 Meters 相加
+use std::ops::Add;
+struct Millimeters(u32);
+struct Meters(u32);
+// 自定义 RHS 参数
+impl Add<Meters> for Millimeters {
+    type Output = Millimeters;
+    fn add(self, other: Meters) -> Millimeters {
+        Millimeters(self.0 + (other.0 * 1000))
+    }
+}
+```
+
+## 完全限定语法与消歧义：调用相同名称的方法
+
+```rust
+trait Pilot {
+    fn fly(&self);
+}
+trait Wizard {
+    fn fly(&self);
+}
+
+struct Human;
+impl Pilot for Human {
+    fn fly(&self) {
+        println!("This is your captain speaking.");
+    }
+}
+impl Wizard for Human {
+    fn fly(&self) {
+        println!("Up!");
+    }
+}
+
+impl Human {
+    fn fly(&self) {
+        println!("*waving arms furiously*");
+    }
+}
+fn main() {
+    let person = Human;
+    Pilot::fly(&person);
+    Wizard::fly(&person);
+    person.fly();
+}
+// This is your captain speaking.
+// Up!
+// *waving arms furiously*
+```
+
+```rust
+trait Animal {
+    fn baby_name() -> String;
+}
+struct Dog;
+impl Dog {
+    fn baby_name() -> String {
+        String::from("Spot")
+    }
+}
+impl Animal for Dog {
+    fn baby_name() -> String {
+        String::from("puppy")
+    }
+}
+fn main() {
+    println!("A baby dog is called a {}", Dog::baby_name());
+    println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
+}
+// A baby dog is called a Spot
+// A baby dog is called a puppy
+```
+
+## 父 trait 用于在另一个 trait 中使用某 trait 的功能
+
+```rust
+use std::fmt;
+// 实现 OutlinePrint trait，它要求来自 Display 的功能
+// 因为指定了 OutlinePrint 需要 Display trait，
+// 则可以在 outline_print 中使用 to_string， 其会为任何实现 Display 的类型自动实现。
+trait OutlinePrint: fmt::Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+
+// 如果尝试在一个没有实现 Display 的类型上实现 OutlinePrint 会发生什么，
+// 比如 Point 结构体：
+// 这样会得到一个错误说 Display 是必须的而未被实现：
+struct Point {
+    x: i32,
+    y: i32,
+}
+impl OutlinePrint for Point {}
+
+// 一旦在 Point 上实现 Display 并满足 OutlinePrint 要求的限制，
+// 比如这样：将能成功编译
+use std::fmt;
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+```
+
+## newtype 模式用以在外部类型上实现外部 trait
+
+如果想要在 `Vec<T>` 上实现 `Display`，而孤儿规则阻止我们直接这么做，
+因为 `Display trait` 和 `Vec<T>` 都定义于我们的 `crate` 之外。
+可以创建一个包含 `Vec<T>` 实例的 `Wrapper` 结构体，
+接着可以如列表 19-31 那样在 `Wrapper` 上实现 `Display` 并使用 `Vec<T>` 的值：
+
+```rust
+use std::fmt;
+struct Wrapper(Vec<String>);
+impl fmt::Display for Wrapper {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
+
+fn main() {
+    let w = Wrapper(vec![String::from("hello"), String::from("world")]);
+    println!("w = {}", w);
+}
+```

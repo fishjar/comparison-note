@@ -1,3 +1,3 @@
 ---
-title: 接口
+title: 接口/特征（interface/trait）
 ---

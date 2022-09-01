@@ -1,0 +1,10 @@
+- 有两个并发概念是内嵌于语言中的：`std::marker` 中的 `Sync` 和 `Send` trait。
+- `Send` 标记 trait 表明类型的所有权可以在线程间传递
+  - 几乎所有基本类型都是 `Send` 的，除了裸指针（raw pointer）
+  - 不过有一些例外，包括 `Rc<T>`
+- `Sync` 标记 trait 表明一个实现了 Sync 的类型可以安全的在多个线程中拥有其值的引用。
+  - 换一种方式来说，对于任意类型 `T`，如果 `&T`（T 的引用）是 `Send` 的话 `T` 就是 `Sync` 的，
+  - 基本类型是 `Sync` 的，完全由 `Sync` 的类型组成的类型也是 `Sync` 的
+  - `RefCell<T>` 和 `Cell<T>` 系列类型不是 `Sync` 的。
+  - `RefCell<T>` 在运行时所进行的借用检查也不是线程安全的。
+  - `Mutex<T>` 是 `Sync` 的，
