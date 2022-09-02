@@ -5,9 +5,10 @@
 - 字符串 string（`String`）
   - `String` 是 `string` 的一种类型
   - 类似还有 `OsString`, `OsStr`, `CString`, and `CStr`
-- 字符串切片 string slice (`str`)
+- 字符串切片 string slice (`&str`)
   - string slice 是 `String` 中一部分值的引用
   - 通常是借用的形式 `&str`
+  - `str` 是一个 `DST`；直到运行时我们都不知道字符串有多长。
 
 ## 创建 String
 
@@ -19,6 +20,7 @@ let mut s = String::new();
 let mut s = String::from("hello");
 
 // 使用 to_string 方法创建 String
+// 这里data的类型是 &str 而不是 str
 let data = "initial contents";
 let s = data.to_string();
 
