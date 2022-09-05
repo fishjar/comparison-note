@@ -1,3 +1,9 @@
+结构体（structure，缩写成 struct）有 3 种类型
+
+- 元组结构体（tuple struct），事实上就是具名元组而已。
+- 经典的 C 语言风格结构体（C struct）。
+- 单元结构体（unit struct），不带字段，在泛型中很有用。
+
 ```rust
 #[derive(Debug)]
 struct User {
