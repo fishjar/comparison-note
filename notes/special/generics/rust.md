@@ -63,6 +63,22 @@ fn main() {
 }
 ```
 
+## 函数中的泛型
+
+```rust
+struct SGen<T>(T); // 泛型类型 `SGen`。
+// 定义一个函数 `generic`，接受一个 `SGen<T>` 类型的参数 `_s`。
+// 因为 `SGen<T>` 之前有 `<T>`，所以这个函数是关于 `T` 的泛型函数。
+fn generic<T>(_s: SGen<T>) {}
+fn main() {
+    // 为 `generic()` 显式地指定类型参数 `char`。
+    generic::<char>(SGen('a'));
+
+    // 为 `generic()` 隐式地指定类型参数 `char`。
+    generic(SGen('c'));
+}
+```
+
 ## 结构体定义中的泛型
 
 ```rust
