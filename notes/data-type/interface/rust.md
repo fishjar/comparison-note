@@ -351,3 +351,411 @@ fn main() {
     println!("w = {}", w);
 }
 ```
+
+## 派生
+
+下面是可以自动派生的 trait：
+
+- 比较 trait: `Eq`, `PartialEq`, `Ord`, `PartialOrd`
+- `Clone`, 用来从 `&T` 创建副本 `T`。
+- `Copy`，使类型具有 “复制语义”（copy semantics）而非 “移动语义”（move semantics）。
+- `Hash`，从 `&T` 计算哈希值（hash）。
+- `Default`, 创建数据类型的一个空实例。
+- `Debug`，使用 `{:?}` formatter 来格式化一个值。
+
+## 使用 dyn 返回 trait
+
+```rust
+struct Sheep {}
+struct Cow {}
+
+trait Animal {
+    // 实例方法签名
+    fn noise(&self) -> &'static str;
+}
+
+// 实现 `Sheep` 的 `Animal` trait。
+impl Animal for Sheep {
+    fn noise(&self) -> &'static str {
+        "baaaaah!"
+    }
+}
+
+// 实现 `Cow` 的 `Animal` trait。
+impl Animal for Cow {
+    fn noise(&self) -> &'static str {
+        "moooooo!"
+    }
+}
+
+// 返回一些实现 Animal 的结构体，但是在编译时我们不知道哪个结构体。
+fn random_animal(random_number: f64) -> Box<dyn Animal> {
+    if random_number < 0.5 {
+        Box::new(Sheep {})
+    } else {
+        Box::new(Cow {})
+    }
+}
+
+fn main() {
+    let random_number = 0.234;
+    let animal = random_animal(random_number);
+    println!("You've randomly chosen an animal, and it says {}", animal.noise());
+}
+```
+
+## 运算符重载
+
+```rust
+use std::ops;
+
+struct Foo;
+struct Bar;
+
+#[derive(Debug)]
+struct FooBar;
+
+#[derive(Debug)]
+struct BarFoo;
+
+// `std::ops::Add` trait 用来指明 `+` 的功能，这里我们实现 `Add<Bar>`，它是用于
+// 把对象和 `Bar` 类型的右操作数（RHS）加起来的 `trait`。
+// 下面的代码块实现了 `Foo + Bar = FooBar` 这样的运算。
+impl ops::Add<Bar> for Foo {
+    type Output = FooBar;
+
+    fn add(self, _rhs: Bar) -> FooBar {
+        println!("> Foo.add(Bar) was called");
+
+        FooBar
+    }
+}
+
+// 通过颠倒类型，我们实现了不服从交换律的加法。
+// 这里我们实现 `Add<Foo>`，它是用于把对象和 `Foo` 类型的右操作数加起来的 trait。
+// 下面的代码块实现了 `Bar + Foo = BarFoo` 这样的运算。
+impl ops::Add<Foo> for Bar {
+    type Output = BarFoo;
+
+    fn add(self, _rhs: Foo) -> BarFoo {
+        println!("> Bar.add(Foo) was called");
+
+        BarFoo
+    }
+}
+
+fn main() {
+    println!("Foo + Bar = {:?}", Foo + Bar);
+    println!("Bar + Foo = {:?}", Bar + Foo);
+}
+```
+
+## Drop
+
+```rust
+struct Droppable {
+    name: &'static str,
+}
+
+// 这个简单的 `drop` 实现添加了打印到控制台的功能。
+impl Drop for Droppable {
+    fn drop(&mut self) {
+        println!("> Dropping {}", self.name);
+    }
+}
+
+fn main() {
+    let _a = Droppable { name: "a" };
+
+    // 代码块 A
+    {
+        let _b = Droppable { name: "b" };
+
+        // 代码块 B
+        {
+            let _c = Droppable { name: "c" };
+            let _d = Droppable { name: "d" };
+
+            println!("Exiting block B");
+        }
+        println!("Just exited block B");
+
+        println!("Exiting block A");
+    }
+    println!("Just exited block A");
+
+    // 变量可以手动使用 `drop` 函数来销毁。
+    drop(_a);
+    // 试一试 ^ 将此行注释掉。
+
+    println!("end of the main function");
+
+    // `_a` *不会*在这里再次销毁，因为它已经被（手动）销毁。
+}
+```
+
+## Iterator
+
+```rust
+struct Fibonacci {
+    curr: u32,
+    next: u32,
+}
+
+// 为 `Fibonacci`（斐波那契）实现 `Iterator`。
+// `Iterator` trait 只需定义一个能返回 `next`（下一个）元素的方法。
+impl Iterator for Fibonacci {
+    type Item = u32;
+
+    // 我们在这里使用 `.curr` 和 `.next` 来定义数列（sequence）。
+    // 返回类型为 `Option<T>`：
+    //     * 当 `Iterator` 结束时，返回 `None`。
+    //     * 其他情况，返回被 `Some` 包裹（wrap）的下一个值。
+    fn next(&mut self) -> Option<u32> {
+        let new_next = self.curr + self.next;
+
+        self.curr = self.next;
+        self.next = new_next;
+
+        // 既然斐波那契数列不存在终点，那么 `Iterator` 将不可能
+        // 返回 `None`，而总是返回 `Some`。
+        Some(self.curr)
+    }
+}
+
+// 返回一个斐波那契数列生成器
+fn fibonacci() -> Fibonacci {
+    Fibonacci { curr: 1, next: 1 }
+}
+
+fn main() {
+    // `0..3` 是一个 `Iterator`，会产生：0、1 和 2。
+    let mut sequence = 0..3;
+
+    println!("Four consecutive `next` calls on 0..3");
+    println!("> {:?}", sequence.next());
+    println!("> {:?}", sequence.next());
+    println!("> {:?}", sequence.next());
+    println!("> {:?}", sequence.next());
+
+    // `for` 遍历 `Iterator` 直到返回 `None`，
+    // 并且每个 `Some` 值都被解包（unwrap），然后绑定给一个变量（这里是 `i`）。
+    println!("Iterate through 0..3 using `for`");
+    for i in 0..3 {
+        println!("> {}", i);
+    }
+
+    // `take(n)` 方法提取 `Iterator` 的前 `n` 项。
+    println!("The first four terms of the Fibonacci sequence are: ");
+    for i in fibonacci().take(4) {
+        println!("> {}", i);
+    }
+
+    // `skip(n)` 方法移除前 `n` 项，从而缩短了 `Iterator` 。
+    println!("The next four terms of the Fibonacci sequence are: ");
+    for i in fibonacci().skip(4).take(4) {
+        println!("> {}", i);
+    }
+
+    let array = [1u32, 3, 3, 7];
+
+    // `iter` 方法对数组/slice 产生一个 `Iterator`。
+    println!("Iterate the following array {:?}", &array);
+    for i in array.iter() {
+        println!("> {}", i);
+    }
+}
+```
+
+## impl Trait
+
+如果函数返回实现了 `MyTrait` 的类型，可以将其返回类型编写为 `-> impl MyTrait`。
+这可以大大简化你的类型签名！
+
+```rust
+use std::iter;
+use std::vec::IntoIter;
+
+// 该函数组合了两个 `Vec <i32>` 并在其上返回一个迭代器。
+// 看看它的返回类型多么复杂！
+fn combine_vecs_explicit_return_type(
+    v: Vec<i32>,
+    u: Vec<i32>,
+) -> iter::Cycle<iter::Chain<IntoIter<i32>, IntoIter<i32>>> {
+    v.into_iter().chain(u.into_iter()).cycle()
+}
+
+// 这是完全相同的函数，但其返回类型使用 `impl Trait`。
+// 看看它多么简单！
+fn combine_vecs(
+    v: Vec<i32>,
+    u: Vec<i32>,
+) -> impl Iterator<Item=i32> {
+    v.into_iter().chain(u.into_iter()).cycle()
+}
+
+fn main() {
+    let v1 = vec![1, 2, 3];
+    let v2 = vec![4, 5];
+    let mut v3 = combine_vecs(v1, v2);
+    assert_eq!(Some(1), v3.next());
+    assert_eq!(Some(2), v3.next());
+    assert_eq!(Some(3), v3.next());
+    assert_eq!(Some(4), v3.next());
+    assert_eq!(Some(5), v3.next());
+    println!("all done");
+}
+```
+
+```rust
+// 返回一个将输入和 `y` 相加的函数
+fn make_adder_function(y: i32) -> impl Fn(i32) -> i32 {
+    let closure = move |x: i32| { x + y };
+    closure
+}
+
+fn main() {
+    let plus_one = make_adder_function(1);
+    assert_eq!(plus_one(2), 3);
+}
+```
+
+```rust
+fn double_positives<'a>(numbers: &'a Vec<i32>) -> impl Iterator<Item = i32> + 'a {
+    numbers
+        .iter()
+        .filter(|x| x > &&0)
+        .map(|x| x * 2)
+}
+```
+
+## Clone
+
+```rust
+// 不含资源的单元结构体
+#[derive(Debug, Clone, Copy)]
+struct Nil;
+
+// 一个包含资源的结构体，它实现了 `Clone` trait
+#[derive(Clone, Debug)]
+struct Pair(Box<i32>, Box<i32>);
+
+fn main() {
+    // 实例化 `Nil`
+    let nil = Nil;
+    // 复制 `Nil`，没有资源用于移动（move）
+    let copied_nil = nil;
+
+    // 两个 `Nil` 都可以独立使用
+    println!("original: {:?}", nil);
+    println!("copy: {:?}", copied_nil);
+
+    // 实例化 `Pair`
+    let pair = Pair(Box::new(1), Box::new(2));
+    println!("original: {:?}", pair);
+
+    // 将 `pair` 绑定到 `moved_pair`，移动（move）了资源
+    let moved_pair = pair;
+    println!("copy: {:?}", moved_pair);
+
+    // 报错！`pair` 已失去了它的资源。
+    //println!("original: {:?}", pair);
+    // 试一试 ^ 取消此行注释。
+
+    // 将 `moved_pair`（包括其资源）克隆到 `cloned_pair`。
+    let cloned_pair = moved_pair.clone();
+    // 使用 std::mem::drop 来销毁原始的 pair。
+    drop(moved_pair);
+
+    // 报错！`moved_pair` 已被销毁。
+    //println!("copy: {:?}", moved_pair);
+    // 试一试 ^ 将此行注释掉。
+
+    // 由 .clone() 得来的结果仍然可用！
+    println!("clone: {:?}", cloned_pair);
+}
+```
+
+## 父 trait
+
+```rust
+trait Person {
+    fn name(&self) -> String;
+}
+
+// Person 是 Student 的父 trait。
+// 实现 Student 需要你也 impl 了 Person。
+trait Student: Person {
+    fn university(&self) -> String;
+}
+
+trait Programmer {
+    fn fav_language(&self) -> String;
+}
+
+// CompSciStudent (computer science student，计算机科学的学生) 是 Programmer 和 Student 两者的子类。
+// 实现 CompSciStudent 需要你同时 impl 了两个父 trait。
+trait CompSciStudent: Programmer + Student {
+    fn git_username(&self) -> String;
+}
+
+fn comp_sci_student_greeting(student: &dyn CompSciStudent) -> String {
+    format!(
+        "My name is {} and I attend {}. My favorite language is {}. My Git username is {}",
+        student.name(),
+        student.university(),
+        student.fav_language(),
+        student.git_username()
+    )
+}
+
+fn main() {}
+```
+
+## 消除重叠 trait
+
+```rust
+trait UsernameWidget {
+    // 从这个 widget 中获取选定的用户名
+    fn get(&self) -> String;
+}
+
+trait AgeWidget {
+    // 从这个 widget 中获取选定的年龄
+    fn get(&self) -> u8;
+}
+
+// 同时具有 UsernameWidget 和 AgeWidget 的表单
+struct Form {
+    username: String,
+    age: u8,
+}
+
+impl UsernameWidget for Form {
+    fn get(&self) -> String {
+        self.username.clone()
+    }
+}
+
+impl AgeWidget for Form {
+    fn get(&self) -> u8 {
+        self.age
+    }
+}
+
+fn main() {
+    let form = Form{
+        username: "rustacean".to_owned(),
+        age: 28,
+    };
+
+    // 如果取消注释此行，则会收到一条错误消息，提示 “multiple `get` found”（找到了多个`get`）。
+    // 因为毕竟有多个名为 `get` 的方法。
+    // println!("{}", form.get());
+
+    let username = <Form as UsernameWidget>::get(&form);
+    assert_eq!("rustacean".to_owned(), username);
+    let age = <Form as AgeWidget>::get(&form);
+    assert_eq!(28, age);
+}
+```
