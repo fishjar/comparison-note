@@ -129,6 +129,22 @@ npm install
 npm run serve
 ```
 
+### 错误
+
+```sh
+  opensslErrorStack: [ 'error:03000086:digital envelope routines::initialization error' ],
+  library: 'digital envelope routines',
+  reason: 'unsupported',
+  code: 'ERR_OSSL_EVP_UNSUPPORTED'
+```
+
+```sh
+#For Windows, use the below command in cmd:
+set NODE_OPTIONS=--openssl-legacy-provider
+#For Unix, use:
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+
 ## 更多例子
 
 参考： https://rustwasm.github.io/wasm-bindgen/examples/index.html
@@ -144,6 +160,7 @@ npx serve .
 ### Execute Rust code from JavaScript
 
 ```rust
+// src/lib.rs
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -153,13 +170,14 @@ pub fn helloworld() -> String {
 ```
 
 ```html
+<!-- index.html -->
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <title>"Hello world" in Rust + Webassembly</title>
     <script type="module">
-      import init, { helloworld } from "./pkg/helloworld.js";
+      import init, { helloworld } from "./pkg/hello_wasm.js";
 
       async function run() {
         await init();
