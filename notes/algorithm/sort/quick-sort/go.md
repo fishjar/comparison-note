@@ -5,6 +5,84 @@ import (
 	"fmt"
 )
 
+func quickSort(arr []int, start, last int) {
+	if start < last {
+		base := arr[start]
+		low, high := start, last
+		for low < high {
+			// base是选取的前面第一个，所以这里必须先移动后面指针
+			for low < high && arr[high] >= base {
+				high--
+			}
+			arr[low] = arr[high]
+			for low < high && arr[low] <= base {
+				low++
+			}
+			arr[high] = arr[low]
+		}
+		// 到这里low和high相等了
+		arr[low] = base
+		quickSort(arr, 0, low-1)
+		quickSort(arr, low+1, last)
+	}
+}
+
+func QuickSort(arr []int) {
+	quickSort(arr, 0, len(arr)-1)
+}
+
+func main() {
+	a := []int{3, 6, 7, 4, 5, 1, 2}
+	QuickSort(a)
+	fmt.Println(a)
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func quickSort(arr []int, start, last int) {
+	if start < last {
+		low, high := start, last
+		// 默认选取前面第一个为base
+		for low < high {
+			for low < high && arr[high] >= arr[start] {
+				high--
+			}
+			for low < high && arr[low] <= arr[start] {
+				low++
+			}
+			arr[low], arr[high] = arr[high], arr[low]
+		}
+		// 到这里low和high相等了
+		arr[start], arr[low] = arr[low], arr[start]
+		quickSort(arr, 0, low-1)
+		quickSort(arr, low+1, last)
+	}
+}
+
+func QuickSort(arr []int) {
+	quickSort(arr, 0, len(arr)-1)
+}
+
+func main() {
+	a := []int{3, 6, 7, 4, 5, 1, 2}
+	QuickSort(a)
+	fmt.Println(a)
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
 // QuickSort 快速排序
 func QuickSort(arr []int) {
 	quickSort(arr, 0, len(arr)-1)
